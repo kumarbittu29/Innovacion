@@ -1,0 +1,41 @@
+<resources>
+    <string name="app_name">Innovacion\'18</string>
+    <string name="title_activity_home">Home</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_led">LED</string>
+    <string name="title_activity_bot">BOT</string>
+    <string name="title_activity_connect">Connect</string>
+    <string name="title_activity_developer">Developer</string>
+    <string name="title_activity_society">Society</string>
+    <string name="button">Button</string>
+    <string name="led">LED</string>
+    <string name="bot">BOT</string>
+    <string name="connect">CONNECT</string>
+    <string name="developer">Developer</string>
+    <string name="society">Society</string>
+    <string name="title_activity_bkwas">bkwas</string>
+    <string name="title_activity_main2">Main2Activity</string>
+    <string name="todo15">TODO</string>
+    <string name="todo16">TODO</string>
+    <string name="todo17">TODO</string>
+    <string name="todo18">TODO</string>
+    <string name="todo">TODO</string>
+    <string name="todo1">todo1</string>
+    <string name="todo2">todo3</string>
+    <string name="todo3">todo3</string>
+    <string name="todo4" />
+    <string name="todo5">TODO</string>
+    <string name="todo6">TODO</string>
+    <string name="todo7">TODO</string>
+    <string name="todo8">TODO</string>
+    <string name="todo9">TODO</string>
+    <string name="todo10">TODO</string>
+    <string name="todo11">TODO</string>
+    <string name="todo12">TODO</string>
+    <string name="todo13">TODO</string>
+    <string name="todo14">TODO</string>
+</resources>
