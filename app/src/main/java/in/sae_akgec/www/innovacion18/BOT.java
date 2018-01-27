@@ -41,7 +41,7 @@ public class BOT extends AppCompatActivity
             public void onClick(View view) {
 
                 if (connecto) {
-                    connectedThread.send("1");
+                    connectedThread.send("R");
 
                     Toast.makeText(getApplicationContext(), "Right", Toast.LENGTH_LONG).show();
                 } else {
@@ -55,7 +55,7 @@ public class BOT extends AppCompatActivity
             public void onClick(View view) {
 
                 if (Cnct) {
-                    connectedThread.send("0");
+                    connectedThread.send("L");
 
                     Toast.makeText(getApplicationContext(), "Left", Toast.LENGTH_LONG).show();
                 } else {
@@ -68,7 +68,7 @@ public class BOT extends AppCompatActivity
             public void onClick(View view) {
 
                 if (connecto) {
-                    connectedThread.send("1");
+                    connectedThread.send("U");
 
                     Toast.makeText(getApplicationContext(), "Up", Toast.LENGTH_LONG).show();
                 } else {
@@ -82,7 +82,7 @@ public class BOT extends AppCompatActivity
             public void onClick(View view) {
 
                 if (Cnct) {
-                    connectedThread.send("0");
+                    connectedThread.send("D");
 
                     Toast.makeText(getApplicationContext(), "Down", Toast.LENGTH_LONG).show();
                 } else {
