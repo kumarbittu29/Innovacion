@@ -4,69 +4,60 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="in.sae_akgec.www.innovacion18.BOT"
+    tools:context="in.sae_akgec.www.innovacion18.BotActivity"
     android:background="@drawable/aaaa"
     android:orientation="vertical">
 
-    <ImageButton
+    <ImageView
         android:id="@+id/bot_left"
-        android:layout_width="124dp"
-        android:layout_height="124dp"
-        android:backgroundTint="@android:color/transparent"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
         android:scaleType="fitCenter"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintRight_toLeftOf="@+id/dummy"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:srcCompat="@drawable/right" />
 
-    <ImageButton
+    <ImageView
         android:id="@+id/bot_right"
-        android:layout_width="124dp"
-        android:layout_height="124dp"
-        android:backgroundTint="@android:color/transparent"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
         android:scaleType="fitCenter"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toRightOf="@+id/dummy"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:srcCompat="@drawable/left"/>
 
     <ImageView
         android:id="@+id/dummy"
-        android:layout_width="145dp"
-        android:layout_height="148dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
         android:contentDescription="@string/todo4"
         android:scaleType="fitCenter"
-        app:layout_constraintVertical_bias="0.0"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toRightOf="parent"
+        app:layout_constraintRight_toLeftOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:srcCompat="@drawable/robot"/>
 
-    <ImageButton
+    <ImageView
         android:id="@+id/bot_up"
-        android:layout_width="124dp"
-        android:layout_height="124dp"
-        android:backgroundTint="@android:color/transparent"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
         android:scaleType="fitCenter"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.265"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/dummy"
         app:srcCompat="@drawable/up" android:contentDescription="@string/todo2" />
 
-    <ImageButton
+    <ImageView
         android:id="@+id/bot_down"
-        android:layout_width="124dp"
-        android:layout_height="124dp"
-        android:backgroundTint="@android:color/transparent"
-        android:contentDescription="@string/todo3"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
         android:scaleType="fitCenter"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.801"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/dummy"
         app:srcCompat="@drawable/down" />
-
-
-
 </android.support.constraint.ConstraintLayout>
 

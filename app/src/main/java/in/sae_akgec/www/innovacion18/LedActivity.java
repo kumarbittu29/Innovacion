@@ -4,27 +4,17 @@ import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.view.View;
-import android.support.design.widget.NavigationView;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
 import java.io.IOException;
 import java.util.UUID;
 
-public class LED extends AppCompatActivity {
+public class LedActivity extends AppCompatActivity {
     ImageButton ledOnButton, ledOffButton;
 
     String address = null;
@@ -38,6 +28,10 @@ public class LED extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_led);
+        Bundle bundle = this.getIntent().getExtras();
+        address = bundle.getString("address");
+        BluetoothTask bluetoothTask = new BluetoothTask();
+        bluetoothTask.execute();
         ledOnButton = findViewById(R.id.imageButton9);
         ledOffButton = findViewById(R.id.imageButton10);
 
@@ -57,15 +51,13 @@ public class LED extends AppCompatActivity {
 
     }
 
-
-
     public class BluetoothTask extends AsyncTask<Void, Void, Void> {
         private boolean ConnectSuccess = true;
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            progress = ProgressDialog.show(LED.this, "Connecting...", "Please wait!!!");
+            progress = ProgressDialog.show(LedActivity.this, "Connecting...", "Please wait!!!");
         }
 
         @Override

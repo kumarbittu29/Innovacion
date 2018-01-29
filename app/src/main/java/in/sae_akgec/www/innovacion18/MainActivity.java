@@ -2,20 +2,12 @@ package in.sae_akgec.www.innovacion18;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothSocket;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity {
     ImageView bluetooth_button, bot_button, led_button, developer_button, society_button;
@@ -24,14 +16,7 @@ public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_ENABLE_BLUETOOTH = 1;
     private static final int REQUEST_CONNECTION = 2;
 
-    ConnectThread connectThread;
-
-    BluetoothDevice myDevice = null;
-    BluetoothSocket mySocket = null;
-
-    private static String MAC = null;
-    public boolean connecto = false;
-    UUID M_UUID = UUID.fromString("00001101-0000-1000-8000-00805f9b34fb");
+    String address = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,7 +40,6 @@ public class MainActivity extends AppCompatActivity {
         bluetooth_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(MainActivity.this, "bluetooth button clicked", Toast.LENGTH_SHORT).show();
                 bluetoothHandler();
             }
         });
@@ -63,16 +47,32 @@ public class MainActivity extends AppCompatActivity {
         bot_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, BOT.class);
-                startActivity(intent);
+                if (address != null) {
+                    Intent intent = new Intent(MainActivity.this, BotActivity.class);
+                    Bundle bundle = new Bundle();
+                    bundle.putString("address", address);
+                    intent.putExtras(bundle);
+                    startActivity(intent);
+                }
+                else {
+                    Toast.makeText(getApplicationContext(), "Please connect to bluetooth device first", Toast.LENGTH_LONG).show();
+                }
             }
         });
 
         led_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, LED.class);
-                startActivity(intent);
+                if (address != null) {
+                    Intent intent = new Intent(MainActivity.this, LedActivity.class);
+                    Bundle bundle = new Bundle();
+                    bundle.putString("address", address);
+                    intent.putExtras(bundle);
+                    startActivity(intent);
+                }
+                else {
+                    Toast.makeText(getApplicationContext(), "Please connect to bluetooth device first", Toast.LENGTH_LONG).show();
+                }
             }
         });
 
@@ -87,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
         society_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, Society.class);
+                Intent intent = new Intent(MainActivity.this, SocietyActivity.class);
                 startActivity(intent);
             }
         });
@@ -96,10 +96,15 @@ public class MainActivity extends AppCompatActivity {
     public void bluetoothHandler() {
         if (mBluetoothAdapter == null) {
             // Device doesn't support Bluetooth
+            Toast.makeText(getApplicationContext(), "Sorry your device doesn't support Bluetooth Sensor", Toast.LENGTH_LONG).show();
         }
         if (!mBluetoothAdapter.isEnabled()) {
             Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableBtIntent, REQUEST_ENABLE_BLUETOOTH);
+        }
+        if(mBluetoothAdapter.isEnabled()){
+            Intent openList = new Intent(MainActivity.this, ListDevices.class);
+            startActivityForResult(openList, REQUEST_CONNECTION);
         }
     }
 
@@ -111,75 +116,20 @@ public class MainActivity extends AppCompatActivity {
             case REQUEST_ENABLE_BLUETOOTH:
                 if (resultCode == Activity.RESULT_OK) {
                     Toast.makeText(getApplicationContext(), "Bluetooth Has Been Activated", Toast.LENGTH_LONG).show();
+                    Intent openList = new Intent(MainActivity.this, ListDevices.class);
+                    startActivityForResult(openList, REQUEST_CONNECTION);
                 } else {
                     Toast.makeText(getApplicationContext(), "Bluetooth Has Not Been Activated", Toast.LENGTH_LONG).show();
-                    finish();
                 }
                 break;
             case REQUEST_CONNECTION:
                 if (resultCode == Activity.RESULT_OK) {
-                    MAC = data.getExtras().getString(ListDevices.MAC_ADDRESS);
-                    myDevice = mBluetoothAdapter.getRemoteDevice(MAC);
-                    try {
-                        mySocket = myDevice.createRfcommSocketToServiceRecord(M_UUID);
-                        mySocket.connect();
-                        connecto = true;
-                        connectThread = new ConnectThread(mySocket);
-                        connectThread.start();
-                        Toast.makeText(getApplicationContext(), "You Were Connected With: " + MAC, Toast.LENGTH_LONG).show();
-                    } catch (IOException error) {
-                        connecto = false;
-                        Toast.makeText(getApplicationContext(), "An ERROR Has Occured" + error, Toast.LENGTH_LONG).show();
-                    }
-
+                    address = data.getExtras().getString(ListDevices.MAC_ADDRESS);
                 } else {
                     Toast.makeText(getApplicationContext(), "Failed To Get MAC", Toast.LENGTH_LONG).show();
                 }
         }
     }
 
-    private class ConnectThread extends Thread {
-        private final InputStream mmInStream;
-        private final OutputStream mmOutStream;
 
-        public ConnectThread(BluetoothSocket socket) {
-            mySocket = socket;
-            InputStream tmpIn = null;
-            OutputStream tmpOut = null;
-            // Get the input and output streams, using temp objects because
-            // member streams are final
-            try {
-                tmpIn = socket.getInputStream();
-                tmpOut = socket.getOutputStream();
-            } catch (IOException e) {
-            }
-            mmInStream = tmpIn;
-            mmOutStream = tmpOut;
-        }
-
-        public void run() {
-            byte[] buffer = new byte[1024];  // buffer store for the stream
-            int bytes; // bytes returned from read()
-            // Keep listening to the InputStream until an exception occurs
-            /* while (true) {
-                try {
-                    // Read from the InputStream
-                    bytes = mmInStream.read(buffer);
-                    // Send the obtained bytes to the UI activity
-                   // mHandler.obtainMessage(MESSAGE_READ, bytes, -1, buffer)
-                     //       .sendToTarget();
-                } catch (IOException e) {
-                    break;
-                }
-            }*/
-        }
-
-        public void send(String dataSend) {
-            byte[] msgBuffer = dataSend.getBytes();
-            try {
-                mmOutStream.write(msgBuffer);
-            } catch (IOException e) {
-            }
-        }
-    }
 }
