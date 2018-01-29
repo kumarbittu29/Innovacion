@@ -1,6 +1,11 @@
 package in.sae_akgec.www.innovacion18;
 
+import android.app.ProgressDialog;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothSocket;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -16,147 +21,140 @@ import android.view.MenuItem;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
-public class LED extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
-    ImageButton imageButton9, imageButton10;
+import java.io.IOException;
+import java.util.UUID;
 
+public class LED extends AppCompatActivity {
+    ImageButton ledOnButton, ledOffButton;
 
-
-
-
+    String address = null;
+    private ProgressDialog progress;
+    BluetoothAdapter myBluetooth = null;
+    BluetoothSocket btSocket = null;
+    private boolean isBtConnected = false;
+    static final UUID myUUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_led);
+        ledOnButton = findViewById(R.id.imageButton9);
+        ledOffButton = findViewById(R.id.imageButton10);
 
-
-        imageButton9 = findViewById(R.id.imageButton9);
-        imageButton10 = findViewById(R.id.imageButton10);
-
-
-
-        imageButton9.setOnClickListener(new View.OnClickListener() {
+        ledOnButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                if (connecto) {
-                    connectedThread.send("1");
-
-                    Toast.makeText(getApplicationContext(), "LED is ON", Toast.LENGTH_LONG).show();
-                } else {
-                    Toast.makeText(getApplicationContext(), "Bluetooth is not CONNECTED", Toast.LENGTH_LONG).show();
-                }
+                turnOnLed();
             }
         });
 
-        imageButton10.setOnClickListener(new View.OnClickListener() {
+        ledOffButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                if (Cnct) {
-                    connectedThread.send("0");
-
-                    Toast.makeText(getApplicationContext(), "LED is OFF", Toast.LENGTH_LONG).show();
-                } else {
-                    Toast.makeText(getApplicationContext(), "Bluetooth is not CONNECTED", Toast.LENGTH_LONG).show();
-                }
+                turnOffLed();
             }
         });
 
-
-
-
-
-
-
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
-
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.addDrawerListener(toggle);
-        toggle.syncState();
-
-
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
     }
 
-    @Override
-    public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
+
+
+    public class BluetoothTask extends AsyncTask<Void, Void, Void> {
+        private boolean ConnectSuccess = true;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progress = ProgressDialog.show(LED.this, "Connecting...", "Please wait!!!");
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            try
+            {
+                if (btSocket == null || !isBtConnected)
+                {
+                    myBluetooth = BluetoothAdapter.getDefaultAdapter();//get the mobile bluetooth device
+                    BluetoothDevice dispositivo = myBluetooth.getRemoteDevice(address);//connects to the device's address and checks if it's available
+                    btSocket = dispositivo.createInsecureRfcommSocketToServiceRecord(myUUID);//create a RFCOMM (SPP) connection
+                    BluetoothAdapter.getDefaultAdapter().cancelDiscovery();
+                    btSocket.connect();//start connection
+                }
+            }
+            catch (IOException e)
+            {
+                ConnectSuccess = false;//if the try failed, you can check the exception here
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            super.onPostExecute(result);
+            if (!ConnectSuccess)
+            {
+                msg("Connection Failed. Is it a SPP Bluetooth? Try again.");
+                finish();
+            }
+            else
+            {
+                msg("Connected.");
+                isBtConnected = true;
+            }
+            progress.dismiss();
+        }
+    }
+
+    private void msg(String s)
+    {
+        Toast.makeText(getApplicationContext(),s,Toast.LENGTH_LONG).show();
+    }
+
+    private void Disconnect()
+    {
+        if (btSocket!=null) //If the btSocket is busy
+        {
+            try {
+                btSocket.close(); //close connection
+            } catch (IOException e) {
+                msg("Error");
+            }
+        }
+    }
+
+    private void turnOffLed()
+    {
+        if (btSocket!=null)
+        {
+            try
+            {
+                btSocket.getOutputStream().write("F".toString().getBytes());
+            }
+            catch (IOException e)
+            {
+                msg("Error");
+            }
+        }
+    }
+
+    private void turnOnLed()
+    {
+        if (btSocket!=null)
+        {
+            try
+            {
+                btSocket.getOutputStream().write("T".toString().getBytes());
+            }
+            catch (IOException e)
+            {
+                msg("Error");
+            }
         }
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.home, menu);
-        return true;
-    }
-
-
-
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-    @SuppressWarnings("StatementWithEmptyBody")
-    @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
-        int id = item.getItemId();
-
-        switch (id) {
-
-            case R.id.nav_home:
-                Intent h = new Intent(LED.this, Home.class);
-                startActivity(h);
-                break;
-            case R.id.nav_led:
-                Intent i = new Intent(LED.this, LED.class);
-                startActivity(i);
-                break;
-            case R.id.nav_bot:
-                Intent g = new Intent(LED.this, BOT.class);
-                startActivity(g);
-                break;
-            case R.id.nav_connect:
-                Intent s = new Intent(LED.this, Connect.class);
-                startActivity(s);
-                break;
-            case R.id.nav_developer:
-                Intent r = new Intent(LED.this, Developer.class);
-                startActivity(r);
-                break;
-            case R.id.nav_society:
-                Intent t = new Intent(LED.this, Society.class);
-                startActivity(t);
-                break;
-        }
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
-        return true;
+    protected void onDestroy() {
+        super.onDestroy();
+        Disconnect();
     }
 }
