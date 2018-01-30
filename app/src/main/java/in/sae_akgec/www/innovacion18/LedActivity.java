@@ -120,7 +120,7 @@ public class LedActivity extends AppCompatActivity {
         {
             try
             {
-                btSocket.getOutputStream().write("F".toString().getBytes());
+                btSocket.getOutputStream().write("0".toString().getBytes());
             }
             catch (IOException e)
             {
@@ -135,7 +135,7 @@ public class LedActivity extends AppCompatActivity {
         {
             try
             {
-                btSocket.getOutputStream().write("T".toString().getBytes());
+                btSocket.getOutputStream().write("1".toString().getBytes());
             }
             catch (IOException e)
             {

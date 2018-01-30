@@ -143,7 +143,7 @@ public class BotActivity extends AppCompatActivity {
     private void moveUp() {
         if (btSocket != null) {
             try {
-                btSocket.getOutputStream().write("U".toString().getBytes());
+                btSocket.getOutputStream().write("F".toString().getBytes());
             } catch (IOException e) {
                 msg("Error");
             }
@@ -153,7 +153,7 @@ public class BotActivity extends AppCompatActivity {
     private void moveDown() {
         if (btSocket != null) {
             try {
-                btSocket.getOutputStream().write("D".toString().getBytes());
+                btSocket.getOutputStream().write("B".toString().getBytes());
             } catch (IOException e) {
                 msg("Error");
             }
