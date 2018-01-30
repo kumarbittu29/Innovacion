@@ -15,7 +15,7 @@ import java.io.IOException;
 import java.util.UUID;
 
 public class BotActivity extends AppCompatActivity {
-    ImageView upButton, downButton, rightButton, leftButton;
+    ImageView upButton, downButton, rightButton, leftButton, stopButton;
     String address = null;
     private ProgressDialog progress;
     BluetoothAdapter myBluetooth = null;
@@ -35,6 +35,7 @@ public class BotActivity extends AppCompatActivity {
         downButton = (ImageView) findViewById(R.id.bot_down);
         rightButton = (ImageView) findViewById(R.id.bot_right);
         leftButton = (ImageView) findViewById(R.id.bot_left);
+        stopButton = (ImageView) findViewById(R.id.dummy);
 
         upButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -64,6 +65,12 @@ public class BotActivity extends AppCompatActivity {
             }
         });
 
+        stopButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                stopCar();
+            }
+        });
     }
 
     public class BluetoothTask extends AsyncTask<Void, Void, Void> {
@@ -109,6 +116,10 @@ public class BotActivity extends AppCompatActivity {
         Toast.makeText(getApplicationContext(), s, Toast.LENGTH_LONG).show();
     }
 
+    private void msgShort(String s) {
+        Toast.makeText(getApplicationContext(), s, Toast.LENGTH_SHORT).show();
+    }
+
     private void Disconnect() {
         if (btSocket != null) //If the btSocket is busy
         {
@@ -124,6 +135,7 @@ public class BotActivity extends AppCompatActivity {
         if (btSocket != null) {
             try {
                 btSocket.getOutputStream().write("L".toString().getBytes());
+                msgShort("Turning Left");
             } catch (IOException e) {
                 msg("Error");
             }
@@ -134,6 +146,7 @@ public class BotActivity extends AppCompatActivity {
         if (btSocket != null) {
             try {
                 btSocket.getOutputStream().write("R".toString().getBytes());
+                msgShort("Turning Right");
             } catch (IOException e) {
                 msg("Error");
             }
@@ -144,6 +157,7 @@ public class BotActivity extends AppCompatActivity {
         if (btSocket != null) {
             try {
                 btSocket.getOutputStream().write("F".toString().getBytes());
+                msgShort("Moving Forward");
             } catch (IOException e) {
                 msg("Error");
             }
@@ -154,11 +168,24 @@ public class BotActivity extends AppCompatActivity {
         if (btSocket != null) {
             try {
                 btSocket.getOutputStream().write("B".toString().getBytes());
+                msgShort("Moving Backward");
             } catch (IOException e) {
                 msg("Error");
             }
         }
     }
+
+    private void stopCar() {
+        if (btSocket != null) {
+            try {
+                btSocket.getOutputStream().write("S".toString().getBytes());
+                msgShort("!!Stop!!");
+            } catch (IOException e) {
+                msg("Error");
+            }
+        }
+    }
+
 
     @Override
     protected void onDestroy() {
